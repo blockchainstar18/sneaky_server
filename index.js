@@ -53,7 +53,7 @@ const prepareTables = () => {
     con.query(sql)
 
 
-    sql = "CREATE TABLE IF NOT EXISTS exaccs (id int(11) NOT NULL, user varchar(200) DEFAULT NULL, password varchar(200) DEFAULT NULL, ip varchar(200) DEFAULT NULL,createdAt date DEFAULT NULL, updatedAt date DEFAULT NULL, PRIMARY KEY (user, password)) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
+    sql = "CREATE TABLE IF NOT EXISTS exaccs (id int(11) NOT NULL, user varchar(200) DEFAULT NULL, password varchar(200) DEFAULT NULL, ip varchar(200) DEFAULT NULL,startedAt date DEFAULT NULL,createdAt date DEFAULT NULL, updatedAt date DEFAULT NULL, PRIMARY KEY (user, password)) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
     con.query(sql)
 
     // sql = "CREATE TABLE IF NOT EXISTS users (id int(11) NOT NULL, ip varchar(200) DEFAULT NULL, startedAt date DEFAULT NULL, createdAt date DEFAULT NULL, updatedAt date DEFAULT NULL, PRIMARY KEY (ip)) ENGINE=InnoDB DEFAULT CHARSET=latin1;"

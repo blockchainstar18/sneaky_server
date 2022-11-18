@@ -12,6 +12,7 @@ export const getCredentials = async (req, res) => {
     if (req.body.membership == 'standby') {
         await db.query(`update ${req.body.stream} set replacements = (replacements-1) where ip = '${req.body.ip}'`)
         await db.query(`update ${req.body.stream} set startedAt = CURDATE() where ip = '${req.body.ip}'`)
+        await db.query(`update exaccs set startedAt = CURDATE() where ip = '${req.body.ip}'`)
     }
 
     if (req.body.membership == 'retry') {
@@ -154,10 +155,14 @@ export const signinToExtension = async (req, res) => {
 
 export const getMembership = async (req, res) => {
     const [replacements, days] = await get_Day_Replacement(req.body.stream, req.body.ip)
+
+    const result = await db.query(`SELECT 30-DATEDIFF(CURDATE(), startedAt) as days FROM exaccs where ip = '${req.body.ip}'`)
+    const alldays = result[0][0].days
+
     console.log(days)
     res.json({
         replacements: replacements,
-        days: days
+        days: alldays
     })
 }
 

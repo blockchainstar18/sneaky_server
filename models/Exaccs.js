@@ -12,6 +12,9 @@ const ExAccount = db.define('exaccs', {
     },
     ip: {
         type: DataTypes.STRING
+    },
+    startedAt: {
+        type: DataTypes.DATEONLY
     }
 }, {
     freezeTableName: true
