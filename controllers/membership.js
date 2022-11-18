@@ -118,7 +118,8 @@ export const signinToExtension = async (req, res) => {
     const exacc = await ExAccount.findOne({
         where: {
             user: req.body.user,
-            password: req.body.password
+            password: req.body.password,
+            ip: null
         }
     })
     if (exacc) {
