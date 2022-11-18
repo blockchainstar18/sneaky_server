@@ -10,24 +10,33 @@ import Dazn from "../models/Dazn.js";
 export const getCredentials = async (req, res) => {
     console.log(req.body)
     if (req.body.membership == 'standby') {
-        await db.query(`update ${req.body.stream} set replacements = (replacements-1) where ip = '${req.body.ip}'`)
-        await db.query(`update ${req.body.stream} set startedAt = CURDATE() where ip = '${req.body.ip}'`)
+
         await db.query(`update exaccs set startedAt = CURDATE() where ip = '${req.body.ip}'`)
     }
 
+    const re = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`)
+    if (!re[0][0].startedAt) {
+        await db.query(`update ${req.body.stream} set replacements = (replacements-1) where ip = '${req.body.ip}'`)
+        await db.query(`update ${req.body.stream} set startedAt = CURDATE() where ip = '${req.body.ip}'`)
+    }
+
+
+
+
+
     if (req.body.membership == 'retry') {
-        const current = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip} and flag = 1'`)
+        const current = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`)
         const ip = current[0][0].ip
         const startedAt = current[0][0].startedAt
         const replacements = current[0][0].replacements
 
-        await db.query(`update ${req.body.stream} set flag = 0 where ip = '${req.body.ip}'`)
-        await db.query(`update ${req.body.stream} set ip = '${ip}', startedAt = '${startedAt}',replacements = '${replacements - 1}' where ip is NULL LIMIT 1`)
+        await db.query(`update ${req.body.stream} set flag = 0, ip = null, startedAt = null, replacements = null where ip = '${req.body.ip}'`)
+        await db.query(`update ${req.body.stream} set ip = '${ip}', startedAt = '${startedAt}',replacements = '${replacements - 1}' where ip is NULL and flag = 1 LIMIT 1`)
     }
 
 
 
-    const result = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}' and flag = 1`)
+    const result = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`)
 
     if (req.body.stream == 'netflix') {
         console.log(result[0][0])

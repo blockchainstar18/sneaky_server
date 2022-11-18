@@ -27,7 +27,6 @@ const finalizeConnection = async () => {
     app.use('/msgs', MsgsRoute)
     app.use('/exaccs', ExaccsRoute)
 
-
     // app.use('/users', userRoute)
     app.use('/membership', membershipRoute)
     const port = 3000
@@ -59,12 +58,12 @@ const prepareTables = () => {
     // sql = "CREATE TABLE IF NOT EXISTS users (id int(11) NOT NULL, ip varchar(200) DEFAULT NULL, startedAt date DEFAULT NULL, createdAt date DEFAULT NULL, updatedAt date DEFAULT NULL, PRIMARY KEY (ip)) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
     // con.query(sql)
 
-    sql = "create table if not exists msgs (id int(11) not null, globalMsg varchar(1000) default null, fulfillMsg varchar(1000) default null, createdAt date default null, updatedAt date default null, primary key (id)) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
+    sql = "create table if not exists msgs (id int(11) not null, Msgs varchar(2000) default null, createdAt date default null, updatedAt date default null, primary key (Msgs)) ENGINE=InnoDB DEFAULT CHARSET=latin1;"
     con.query(sql, function (err, result) {
         sql = "SELECT COUNT(*) FROM `msgs`;"
         con.query(sql, function (err, result) {
             if (result[0]['COUNT(*)'] == 0) {
-                sql = "INSERT INTO `msgs` (`id`, `globalMsg`, `fulfillMsg`) VALUES (1, 'hello','Your account is fulfilled')"
+                sql = "INSERT INTO `msgs` (`id`, `Msgs`) VALUES (1, 'Welcome to Sneaky!')"
                 con.query(sql)
             }
             con.end()

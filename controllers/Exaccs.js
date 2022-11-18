@@ -2,6 +2,7 @@ import ExAccount from "../models/Exaccs.js";
 // import User from "../models/User.js"
 import randomWords from 'random-words'
 import generator from 'generate-password'
+import db from "../config/database.js";
 
 
 export const getAccounts = async (req, res) => {
@@ -13,7 +14,13 @@ export const getAccounts = async (req, res) => {
     }
 }
 
+export const getUsers = async (req, res) => {
+    db.query(`select * from exaccs where ip is not null`)
+        .then((users) => {
+            res.json(users[0])
+        })
 
+}
 
 export const generateAccounts = async (req, res) => {
     console.log(req.body.numberOfAccounts)

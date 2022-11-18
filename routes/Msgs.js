@@ -1,6 +1,7 @@
 import express from "express";
-import { updateMsg, getMsg } from "../controllers/Msgs.js";
+import { getMsg, newMsg, deleteMsg } from "../controllers/Msgs.js";
 const router = express.Router();
-router.patch('/', updateMsg);
+router.post('/', newMsg);
 router.get('/', getMsg)
+router.patch('/', deleteMsg)
 export default router;
