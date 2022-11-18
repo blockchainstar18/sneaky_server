@@ -61,28 +61,47 @@ const get_Day_Replacement = async (stream, ip) => {
 export const checkMembership = async (req, res) => {
 
     var state
-    const streams = [
-        'hbomax',
-        'netflix',
-        'disneyplus',
-        'crunchyroll',
-        'dazn'
-    ]
+    // const streams = [
+    //     'hbomax',
+    //     'netflix',
+    //     'disneyplus',
+    //     'crunchyroll',
+    //     'dazn'
+    // ]
 
-    const result = await db.query(`SELECT * FROM ${req.body.stream} where ip = '${req.body.ip}'`)
-    if (result[0][0])
-        for (var i = 0; i < streams.length; i++) {
-            var stream = streams[i];
-            const [replacements, days] = await get_Day_Replacement(stream, req.body.ip)
-            if (stream == req.body.stream && days == null)
-                state = 'standby'
-            if (stream == req.body.stream && days != null)
-                state = 'active'
-            if ((days != null && days <= 0) || (stream == req.body.stream && replacements <= 0))
-                state = 'fulfilled'
+    // const result = await db.query(`SELECT * FROM ${req.body.stream} where ip = '${req.body.ip}'`)
+    // if (result[0][0])
+    //     for (var i = 0; i < streams.length; i++) {
+    //         var stream = streams[i];
+    //         const [replacements, days] = await get_Day_Replacement(stream, req.body.ip)
+    //         if (stream == req.body.stream && days == null)
+    //             state = 'standby'
+    //         if (stream == req.body.stream && days != null)
+    //             state = 'active'
+    //         if ((days != null && days <= 0) || (stream == req.body.stream && replacements <= 0))
+    //             state = 'fulfilled'
+    //     }
+    // else
+    //     state = 'new'
+
+    const exacc = await ExAccount.findOne({
+        where: {
+            ip: req.body.ip
         }
+    })
+    if (exacc) {
+        const result = await db.query(`SELECT 30-DATEDIFF(CURDATE(), startedAt) as days FROM exaccs where ip = '${req.body.ip}'`)
+        if (result[0][0].days == null)
+            state = 'standby'
+        if (result[0][0].days != null)
+            state = 'active'
+        if (result[0][0].days != null && result[0][0].days <= 0)
+            state = 'fulfilled'
+    }
     else
         state = 'new'
+
+
 
     console.log(state)
 
