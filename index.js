@@ -30,7 +30,8 @@ const finalizeConnection = async () => {
 
     // app.use('/users', userRoute)
     app.use('/membership', membershipRoute)
-    app.listen(5000, () => console.log('Server running at port 5000'));
+    const port = 3000
+    app.listen(port, () => console.log(`Server running at port ${port}`));
 }
 const prepareTables = () => {
     var con = mysql.createConnection({
