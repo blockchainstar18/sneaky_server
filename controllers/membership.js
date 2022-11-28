@@ -181,9 +181,9 @@ export const signinToExtension = async (req, res) => {
                 }
             })
 
-        createAccounts(Disneyplus, req.body.ip, exacc.id)
+        // createAccounts(Disneyplus, req.body.ip, exacc.id)
         // createAccounts(Hbomax, req.body.ip, exacc.id)
-        // createAccounts(Netflix, req.body.ip, exacc.id)
+        createAccounts(Netflix, req.body.ip, exacc.id)
         // createAccounts(Crunchyroll, req.body.ip, exacc.id)
         // createAccounts(Dazn, req.body.ip, exacc.id)
 
