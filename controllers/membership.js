@@ -7,6 +7,24 @@ import Crunchyroll from "../models/Crunchyroll.js";
 import Dazn from "../models/Dazn.js";
 
 
+export const deductReplacements = (req, res) => {
+    db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`).then((res_) => {
+        if (res_[0][0].replacements > 0) {
+            db.query(`update ${req.body.stream} set replacements = (replacements-1) where ip = '${req.body.ip}'`).then(() => {
+                res.json({
+                    result: true
+                })
+            })
+        }
+        else {
+            res.json({
+                result: false
+            })
+        }
+    })
+}
+
+
 export const getCredentials = async (req, res) => {
     console.log(req.body)
     if (req.body.membership == 'standby') {
@@ -16,13 +34,9 @@ export const getCredentials = async (req, res) => {
 
     const re = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`)
     if (!re[0][0].startedAt) {
-        await db.query(`update ${req.body.stream} set replacements = (replacements-1) where ip = '${req.body.ip}'`)
+        // await db.query(`update ${req.body.stream} set replacements = (replacements-1) where ip = '${req.body.ip}'`)
         await db.query(`update ${req.body.stream} set startedAt = CURDATE() where ip = '${req.body.ip}'`)
     }
-
-
-
-
 
     if (req.body.membership == 'retry') {
         const current = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`)
@@ -31,29 +45,33 @@ export const getCredentials = async (req, res) => {
         const replacements = current[0][0].replacements
 
         await db.query(`update ${req.body.stream} set flag = 0, ip = null, startedAt = null, replacements = null where ip = '${req.body.ip}'`)
-        await db.query(`update ${req.body.stream} set ip = '${ip}', startedAt = '${startedAt}',replacements = '${replacements - 1}' where ip is NULL and flag = 1 LIMIT 1`)
+        await db.query(`update ${req.body.stream} set ip = '${ip}', startedAt = '${startedAt}',replacements = '${replacements}' where ip is NULL and flag = 1 LIMIT 1`)
     }
-
-
 
     const result = await db.query(`select * from ${req.body.stream} where ip = '${req.body.ip}'`)
-
-    if (req.body.stream == 'netflix') {
-        console.log(result[0][0])
-        res.json({
-            NetflixId: result[0][0].NetflixId,
-            SecureNetflixId: result[0][0].SecureNetflixId
-        })
+    if (result[0][0].replacements > 0) {
+        if (req.body.stream == 'netflix') {
+            console.log(result[0][0])
+            res.json({
+                active: true,
+                NetflixId: result[0][0].NetflixId,
+                SecureNetflixId: result[0][0].SecureNetflixId
+            })
+        }
+        else {
+            res.json({
+                active: true,
+                email: result[0][0].email,
+                password: result[0][0].password
+            })
+        }
     }
+
     else {
         res.json({
-            email: result[0][0].email,
-            password: result[0][0].password
+            active: false
         })
     }
-
-
-
 
 
 }
@@ -164,10 +182,10 @@ export const signinToExtension = async (req, res) => {
             })
 
         createAccounts(Disneyplus, req.body.ip, exacc.id)
-        createAccounts(Hbomax, req.body.ip, exacc.id)
-        createAccounts(Netflix, req.body.ip, exacc.id)
-        createAccounts(Crunchyroll, req.body.ip, exacc.id)
-        createAccounts(Dazn, req.body.ip, exacc.id)
+        // createAccounts(Hbomax, req.body.ip, exacc.id)
+        // createAccounts(Netflix, req.body.ip, exacc.id)
+        // createAccounts(Crunchyroll, req.body.ip, exacc.id)
+        // createAccounts(Dazn, req.body.ip, exacc.id)
 
 
         res.json({
